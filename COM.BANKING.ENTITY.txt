@@ -1,0 +1,480 @@
+COM.BANKING.ENTITY
+------------------------------------------------
+package com.Banking.Entity;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+@Entity
+public class Account {
+	@Id
+	private String accountNumber;
+	private String accountType;
+	private double balance;
+	
+	@ManyToOne
+	@JoinColumn(name="bankId")
+	private Bank bank;
+	
+	@ManyToOne
+	@JoinColumn(name="customerId")
+	private Customer customer;
+	
+	@OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+	Set<Transactions> transactions=new HashSet<Transactions>();
+
+	public Account() {
+		super();
+	}
+
+	public Account(String accountNumber, String accountType, double balance, Bank bank, Customer customer,
+			Set<Transactions> transactions) {
+		super();
+		this.accountNumber = accountNumber;
+		this.accountType = accountType;
+		this.balance = balance;
+		this.bank = bank;
+		this.customer = customer;
+		this.transactions = transactions;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	public Bank getBank() {
+		return bank;
+	}
+
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public Set<Transactions> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transactions> transactions) {
+		this.transactions = transactions;
+	}
+
+	@Override
+	public String toString() {
+		return "Account [accountNumber=" + accountNumber + ", accountType=" + accountType + ", balance=" + balance
+				+ ", bank=" + bank + ", customer=" + customer + ", transactions=" + transactions + "]";
+	}
+	
+	
+}
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.Banking.Entity;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+@Entity
+public class Bank {
+	@Id
+	private String bankId;
+	private String bankName;
+	private String city;
+	private int contactNumber;
+	
+	@OneToMany(mappedBy = "bank",cascade = CascadeType.ALL)
+	Set<Account> account=new HashSet<Account>();
+	
+	@OneToMany(mappedBy = "bank",cascade = CascadeType.ALL)
+	List<Feedback> feedback=new ArrayList<Feedback>();
+
+	public Bank() {
+		super();
+		
+	}
+
+	public Bank(String bankId, String bankName, String city, int contactNumber, Set<Account> account,
+			List<Feedback> feedback) {
+		super();
+		this.bankId = bankId;
+		this.bankName = bankName;
+		this.city = city;
+		this.contactNumber = contactNumber;
+		this.account = account;
+		this.feedback = feedback;
+	}
+
+	public String getBankId() {
+		return bankId;
+	}
+
+	public void setBankId(String bankId) {
+		this.bankId = bankId;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public int getContactNumber() {
+		return contactNumber;
+	}
+
+	public void setContactNumber(int contactNumber) {
+		this.contactNumber = contactNumber;
+	}
+
+	public Set<Account> getAccount() {
+		return account;
+	}
+
+	public void setAccount(Set<Account> account) {
+		this.account = account;
+	}
+
+	public List<Feedback> getFeedback() {
+		return feedback;
+	}
+
+	public void setFeedback(List<Feedback> feedback) {
+		this.feedback = feedback;
+	}
+
+	@Override
+	public String toString() {
+		return "Bank [bankId=" + bankId + ", bankName=" + bankName + ", city=" + city + ", contactNumber="
+				+ contactNumber + ", account=" + account + ", feedback=" + feedback + "]";
+	}
+	
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.Banking.Entity;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+@Entity
+public class Customer {
+	@Id
+	private int customerId;
+	private String customername;
+	private String email;
+	private LocalDate dob;
+	private int phoneNumber;
+	private String city;
+	
+	@OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
+	Set<Account> account=new HashSet<Account>();
+	
+	@OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
+	Set<Feedback> feedback=new HashSet<Feedback>();
+
+	public Customer() {
+		super();
+	}
+
+	public Customer(int customerId, String customername, String email, LocalDate dob, int phoneNumber, String city,
+			Set<Account> account, Set<Feedback> feedback) {
+		super();
+		this.customerId = customerId;
+		this.customername = customername;
+		this.email = email;
+		this.dob = dob;
+		this.phoneNumber = phoneNumber;
+		this.city = city;
+		this.account = account;
+		this.feedback = feedback;
+	}
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int cid) {
+		this.customerId = cid;
+	}
+
+	public String getCustomername() {
+		return customername;
+	}
+
+	public void setCustomername(String customername) {
+		this.customername = customername;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public LocalDate getDob() {
+		return dob;
+	}
+
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
+	}
+
+	public int getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(int phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public Set<Account> getAccount() {
+		return account;
+	}
+
+	public void setAccount(Set<Account> account) {
+		this.account = account;
+	}
+
+	public Set<Feedback> getFeedback() {
+		return feedback;
+	}
+
+	public void setFeedback(Set<Feedback> feedback) {
+		this.feedback = feedback;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [customerId=" + customerId + ", customername=" + customername + ", email=" + email + ", dob="
+				+ dob + ", phoneNumber=" + phoneNumber + ", city=" + city + ", account=" + account + ", feedback="
+				+ feedback + "]";
+	}
+
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.Banking.Entity;
+
+import java.time.LocalDate;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+@Entity
+public class Transactions {
+	@Id
+	private int transactionId;
+	private Double transactionAmount;
+	private String transactionType;
+	private LocalDate transactionDate;
+	
+	@ManyToOne
+	@JoinColumn(name="accountNumber")
+	private Account account;
+
+	public Transactions() {
+		super();
+	}
+
+	public Transactions(int transactionId, Double transactionAmount, String transactionType,
+			LocalDate transactionDate, Account account) {
+		super();
+		this.transactionId = transactionId;
+		this.transactionAmount = transactionAmount;
+		this.transactionType = transactionType;
+		this.transactionDate = transactionDate;
+		this.account = account;
+	}
+
+	public int getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(int tid) {
+		this.transactionId = tid;
+	}
+
+	public Double getTransactionAmount() {
+		return transactionAmount;
+	}
+
+	public void setTransactionAmount(Double transactionAmount) {
+		this.transactionAmount = transactionAmount;
+	}
+
+	public String getTransactionType() {
+		return transactionType;
+	}
+
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
+
+	public LocalDate getTransactionDate() {
+		return transactionDate;
+	}
+
+	public void setTransactionDate(LocalDate transactionDate) {
+		this.transactionDate = transactionDate;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	@Override
+	public String toString() {
+		return "TransactionService [transactionId=" + transactionId + ", transactionAmount=" + transactionAmount
+				+ ", transactionType=" + transactionType + ", transactionDate=" + transactionDate + ", account="
+				+ account + "]";
+	}
+
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.Banking.Entity;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+@Entity
+public class Feedback {
+	@Id
+	private String feedbackId;
+	private String message;
+	
+	@ManyToOne
+	@JoinColumn(name="customerId")
+	private Customer customer;
+	
+	@ManyToOne
+	@JoinColumn(name="bankId")
+	private Bank bank;
+
+	public Feedback() {
+		super();
+	}
+
+	public Feedback(String feedbackId, String message, Customer customer, Bank bank) {
+		super();
+		this.feedbackId = feedbackId;
+		this.message = message;
+		this.customer = customer;
+		this.bank = bank;
+	}
+
+	public String getFeedbackId() {
+		return feedbackId;
+	}
+
+	public void setFeedbackId(String feedbackId) {
+		this.feedbackId = feedbackId;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public Bank getBank() {
+		return bank;
+	}
+
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	@Override
+	public String toString() {
+		return "Feedback [feedbackId=" + feedbackId + ", message=" + message + ", customer=" + customer + ", bank="
+				+ bank + "]";
+	}
+
+}
+
