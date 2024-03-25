@@ -1,0 +1,63 @@
+COM.BANKING.UTILTY
+--------------------
+
+package com.Banking.Utilty;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class UtilityConfig {
+
+	public static Session getSession() {
+		
+		Configuration configuration = new Configuration().configure("Config.xml");
+		SessionFactory sessionFactory = configuration.buildSessionFactory();
+		Session session=sessionFactory.openSession();
+		return session;
+	}
+}
+--------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-configuration>
+	<session-factory>
+      <!-- Database connection settings -->
+    <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/SBI</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">Venky@123</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+
+    <!-- JDBC connection pool settings -->
+    <property name="hibernate.c3p0.min_size">5</property>
+    <property name="hibernate.c3p0.max_size">20</property>
+    <!-- Other Hibernate properties -->
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <mapping class="com.Banking.Entity.Bank"/>
+    <mapping class="com.Banking.Entity.Account"/>
+    <mapping class="com.Banking.Entity.Customer"/>
+    <mapping class="com.Banking.Entity.Transactions"/>
+    <mapping class="com.Banking.Entity.Feedback"/>
+	</session-factory>
+</hibernate-configuration>
+---------------------------------------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.ajp</groupId>
+  <artifactId>AjpHybernate</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.0.0.Alpha8</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.32</version>
+        </dependency>
+    </dependencies>
+</project>
+--------------------------------------------------------------------------------------------

@@ -1,0 +1,324 @@
+COM.BANKING.SERVICE
+----------------------
+
+package com.Banking.Service;
+
+	public class BalanceException extends Exception {
+		public BalanceException(String message) {
+			super(message);
+		}
+
+	}
+
+-------------------------------
+package com.Banking.Service;
+
+public class InvalidBankDetailsException {
+
+}
+
+----------------------------------
+package com.Banking.Service;
+
+public class InvalidInputException extends Exception {
+	public InvalidInputException(String message) {
+		super(message);
+	}
+
+	
+}
+---------------------------
+
+package com.Banking.Service;
+
+import com.Banking.Entity.Account;
+import com.Banking.Entity.Bank;
+import com.Banking.Entity.Customer;
+import com.Banking.Entity.Feedback;
+
+public interface Service {
+	void insertbankDetails(Bank bank);
+	void insertcustomerDetails(Customer customer);
+	void insertaccountDetails(Account account);
+	
+	void addAccountToBank(String bankId,Account account);
+	void addCustomerToAccount(String customerId,String accountId);
+	
+	void getFeedbackByCustomer(String customerId,Feedback feedback);
+	void saveCustomerFeedback(String bankId,Feedback feedback);
+	
+	void getBank(String id) ;
+	void getCustomer(String id);
+	void getAccountById(String id);
+
+}
+-----------------------------------------------
+package com.Banking.Service;
+
+import java.util.InputMismatchException;
+
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Session;
+
+import org.hibernate.Transaction;
+
+import com.Banking.Entity.Account;
+import com.Banking.Entity.Bank;
+import com.Banking.Entity.Customer;
+import com.Banking.Entity.Feedback;
+import com.Banking.Entity.Transactions;
+import com.Banking.Utilty.UtilityConfig;
+import com.Banking.Service.InvalidInputException;
+
+public class ServiceImpl implements Service,TransactionsService{
+	
+	
+	Session session;
+	Transaction transaction;
+
+	public void insertbankDetails(Bank bank) {
+		try{
+			session=UtilityConfig.getSession();
+			transaction=session.beginTransaction();
+		session.saveOrUpdate(bank);
+		transaction.commit();
+		System.out.println("Bank details are inserted successfully");
+		}catch (InputMismatchException e) {
+			System.out.println("Enter valid data....");
+		}
+		finally {
+	    //session.close();
+		}
+	}
+
+	public void insertcustomerDetails(Customer customer) {
+		try {
+		session= UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		session.saveOrUpdate(customer);
+		transaction.commit();
+		System.out.println("Customer details are inserted successfully");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+		    session.close();
+		}
+		
+	}
+
+	public void insertaccountDetails(Account account) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		session.saveOrUpdate(account);
+		transaction.commit();
+		System.out.println("Account details are inserted successfully");
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+    public void addAccountToBank(String bankId,Account account) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		
+		Bank bank=session.get(Bank.class, bankId);
+		
+		bank.getAccount().add(account); // add account to the bank
+		account.setBank(bank);         //set bank for the account
+	    
+		session.saveOrUpdate(account);
+		transaction.commit();
+		System.out.println("Bank details are added to account");
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+	public void addCustomerToAccount(String customerId,String accountId) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		
+		Customer customer=session.get(Customer.class, customerId);
+		Account account=session.get(Account.class, accountId);
+		
+		customer.getAccount().add(account);
+		account.setCustomer(customer);
+		
+		session.saveOrUpdate(account);
+		transaction.commit();
+		System.out.println("Customer details are added to account");
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+	public void getFeedbackByCustomer(String customerId, Feedback feedback) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		Customer customer=session.get(Customer.class, customerId);
+		feedback.setCustomer(customer);
+		session.saveOrUpdate(feedback);
+		transaction.commit();
+		System.out.println("Feedback given by customer");
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+	public void saveCustomerFeedback(String bankId, Feedback feedback) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		Bank bank=session.get(Bank.class, bankId);
+		feedback.setBank(bank);
+		session.saveOrUpdate(feedback);
+		transaction.commit();
+		System.out.println("Bank received feedback from customer");
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+	public void gettransactionsDetails(String accountNumber, Transactions transactions) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		Account account=session.get(Account.class, accountNumber);
+		transactions.setAccount(account);
+		session.saveOrUpdate(transactions);
+		transaction.commit();
+		System.out.println("added transaction details");
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+	public void withdrawAmount(String accountNumber, Double amount) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		Account account=session.get(Account.class, accountNumber);
+		double balance=account.getBalance();
+		System.out.println("Balance : "+balance);
+		
+		if(amount<balance) {
+		
+		double newBalance = account.getBalance()-amount;
+        account.setBalance(newBalance);
+        System.out.println("After withdraw amount balance is : "+newBalance);
+        
+        session.saveOrUpdate(account);
+
+        transaction.commit();
+        System.out.println("Withdrawa successfully...");
+		}else {
+			throw new BalanceException("Amount is not sufficient....");
+		}
+		} catch (BalanceException e) {
+			e.printStackTrace();
+		}finally {
+		    session.close();
+		}
+		
+		
+	}
+
+	public void depositAmount(String accountNumber, Double amount) {
+		try {
+		session=UtilityConfig.getSession();
+		transaction=session.beginTransaction();
+		Account account=session.get(Account.class, accountNumber);
+		double balance=account.getBalance();
+		System.out.println("Balance : "+balance);
+		
+		if(amount>10) {
+		double newBalance = account.getBalance()+amount;
+        account.setBalance(newBalance);
+        System.out.println("After deposit amount balance is : "+newBalance);
+        
+        session.saveOrUpdate(account);
+        
+        transaction.commit();
+        System.out.println("Deposit successful...");
+		}else {
+			throw new BalanceException("Below 10 rupees is not deposit to the account.....");
+		}
+		} catch (BalanceException e) {
+			e.printStackTrace();
+		}finally {
+		    session.close();
+		}
+		
+	}
+
+	public void getBank(String id){
+		try {
+		
+		session=UtilityConfig.getSession();
+		Bank bid=session.load(Bank.class, id);
+		if(bid==null) {
+			throw new InvalidInputException("Enter Valid Data");
+		}else {
+		System.out.println("Bank details : "+bid);
+		}
+		}
+		catch (ObjectNotFoundException e) {
+	        System.out.println("Bank not found with ID: " + id);
+	    } catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		
+	}
+
+	public void getCustomer(String id) {
+		try {
+		session=UtilityConfig.getSession();
+		Customer cid=session.load(Customer.class, id);
+		System.out.println("customer Details:"+cid);
+		}finally {
+		session.close();
+		}
+		
+	}
+
+	public void getAccountById(String id) {
+		try {
+		session = UtilityConfig.getSession();
+        Account aid = session.load(Account.class, id);
+      
+        System.out.println("Account Details : ");
+        System.out.println("ID: " + aid.getAccountNumber());
+        System.out.println("AccountType : "+aid.getAccountType());
+        System.out.println("Balance: " + aid.getBalance());
+       } finally {
+    	session.close();
+     }
+		
+		
+	}
+
+}
+---------------------------------------------------------------------------------------------------
+package com.Banking.Service;
+
+import com.Banking.Entity.Transactions;
+
+public interface TransactionsService {
+	
+	void gettransactionsDetails(String accountNumber,Transactions transactions);
+	void withdrawAmount(String accountNumber,Double amount) throws BalanceException;
+	void depositAmount(String accountNumber,Double amount) throws BalanceException;
+}

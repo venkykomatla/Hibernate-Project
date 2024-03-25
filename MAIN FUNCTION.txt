@@ -1,0 +1,192 @@
+MAIN FUNCTION
+------------------
+import java.time.LocalDate;
+import java.util.Scanner;
+
+import com.Banking.Entity.Account;
+import com.Banking.Entity.Bank;
+import com.Banking.Entity.Customer;
+import com.Banking.Entity.Transactions;
+import com.Banking.Service.BalanceException;
+import com.Banking.Service.Service;
+import com.Banking.Service.ServiceImpl;
+import com.Banking.Service.TransactionsService;
+
+
+public class BankApplication {
+public static void main(String[] args) throws BalanceException  {
+		
+		System.out.println("Welcome to SBI  Banking Application");
+		Service service = new ServiceImpl();
+		TransactionsService tservice= new ServiceImpl();
+                Scanner sc=new Scanner(System.in);System.out.println("1. Insert bank details");
+        System.out.println("2. Insert account details");
+        System.out.println("3. Insert customer details");
+        System.out.println("4. Insert transaction details");
+        System.out.println("5. Get bank details");
+        System.out.println("6. Get customer details");
+        System.out.println("7. Get Account details");
+        System.out.println("8. Deposit amount");
+        System.out.println("9. Withdraw amount");
+        int choice = sc.nextInt();
+
+        while(choice>0) {
+   
+        switch (choice) {
+            case 1:
+                System.out.println("Enter Bank Id: ");
+                String bankId = sc.next();
+                sc.nextLine();
+                System.out.println("Enter Bank Name: ");
+                String bankName = sc.next();
+                sc.nextLine();
+                System.out.println("Enter Bank Contact number: ");
+                int contactNumber = sc.nextInt();
+                sc.nextLine(); // consume the newline character
+                System.out.println("Enter Bank city: ");
+                String city = sc.nextLine();
+
+                Bank bank = new Bank();
+                bank.setBankId(bankId);
+                bank.setBankName(bankName);
+                bank.setContactNumber(contactNumber);
+                bank.setCity(city);
+
+                service.insertbankDetails(bank);
+                break;
+
+            case 2:
+            	System.out.println("Enter Account Number : ");
+            	String ac=sc.nextLine();
+            	sc.nextLine();
+            	System.out.println("Enter Account Type : ");
+            	String actype=sc.nextLine();
+            	System.out.println("Enter Balance : ");
+            	double balance=sc.nextDouble();
+            	
+            	Account account=new Account();
+            	account.setAccountNumber(ac);
+            	account.setAccountType(actype);
+            	account.setBalance(balance);
+            	
+            	service.insertaccountDetails(account);
+            	
+            	break;
+            
+            case 3:
+            	System.out.println("Enter Customer Id : ");
+            	int cid=sc.nextInt();
+            	sc.next();
+            	System.out.println("Enter Customer Name : ");
+            	String cname=sc.nextLine();
+            	sc.nextLine();
+            	System.out.println("Enter Email Id : ");
+            	String email=sc.nextLine();
+            	sc.nextLine();
+            	System.out.println("Enter date of birth : ");
+            	String dob=sc.nextLine();
+            	sc.nextLine();
+            	LocalDate dobate=LocalDate.parse(dob);
+            	System.out.println("Enter  Contact number: ");
+                int ph = sc.nextInt();
+                sc.nextLine(); // consume the newline character
+                System.out.println("Enter city: ");
+                String c = sc.nextLine();
+            	
+                
+                Customer customer=new Customer();
+                customer.setCustomerId(cid);
+                customer.setCustomername(cname);
+                customer.setEmail(email);
+                customer.setDob(dobate);
+                customer.setPhoneNumber(ph);
+                customer.setCity(c);
+                service.insertcustomerDetails(customer);
+                
+                break;
+                
+            case 4:
+            	System.out.println("Enter Transaction Id : ");
+            	int tid=sc.nextInt();
+            	sc.nextLine();
+            	System.out.println("Enter Transaction Amount : ");
+            	double tamount=sc.nextDouble();
+            	System.out.println("Enter Transaction Type : ");
+            	String type=sc.nextLine();
+            	sc.nextLine();
+            	System.out.println("Enter Transaction date : ");
+            	String tdate=sc.nextLine();
+            	LocalDate date=LocalDate.parse(tdate);
+            	System.out.println("Enter account number : ");
+     
+            	Transactions trans=new Transactions();
+            	trans.setTransactionId(tid);
+            	trans.setTransactionAmount(tamount);
+            	trans.setTransactionType(type);
+            	trans.setTransactionDate(date);
+            	
+            	tservice.gettransactionsDetails(sc.nextLine(), trans);
+            
+            	break;
+           
+            case 5:
+            	System.out.println("Enter Bank Id");
+    			String id=sc.nextLine();
+    			service.getBank(id);
+    			break;
+    			
+    		case 6:
+    			System.out.println("Enter Customer Id");
+    			String custid=sc.nextLine();
+    			service.getCustomer(custid);
+    			break;
+    			
+    		case 7:
+    			System.out.println("Enter Account Id");
+    			String aid=sc.nextLine();
+    			service.getAccountById(aid);
+    			break;
+
+    		case 8:
+    			try {
+    			System.out.println("Enter Account number : ");
+    			String acid=sc.nextLine();
+    			System.out.println("Enter amount : ");
+    			double amount=sc.nextDouble();
+    			tservice.depositAmount(acid, amount);
+    			}catch(BalanceException e) {
+    				System.out.println("Not valid");
+    			}
+    			
+    		case 9:
+    			try {
+    			System.out.println("Enter Account number : ");
+    			String accid=sc.next();
+    			System.out.println("Enter amount : ");
+    			double wamount=sc.nextDouble();
+    			tservice.withdrawAmount(accid, wamount);
+    			}catch(BalanceException e) {
+    				System.out.println("Not valid");
+    			}
+            default:
+                System.out.println("Invalid choice");
+                break;
+        }
+        
+        System.out.println("1. Insert bank details");
+        System.out.println("2. Insert account details");
+        System.out.println("3. Insert customer details");
+        System.out.println("4. Insert transaction details");
+        System.out.println("5. Get bank details");
+        System.out.println("6. Get customer details");
+        System.out.println("7. Get Account details");
+        System.out.println("8. Deposit amount");
+        System.out.println("9. Withdraw amount");
+        
+        choice = sc.nextInt();
+		}
+        sc.close();
+	}
+
+
+}
